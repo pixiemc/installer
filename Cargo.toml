@@ -1,0 +1,23 @@
+[package]
+name = "installer"
+version = "0.1.0"
+edition = "2021"
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52.0"
+winapi = { version = "0.3", features = ["winuser", "shellapi"] }
+
+[profile.release]
+opt-level = 3
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.release.package."*"]
+opt-level = 3
+strip = true
+
+[package.metadata.bundle]
+name = "Pixie Installer"
+identifier = "rip.pixie.installer"
