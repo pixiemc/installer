@@ -1,10 +1,17 @@
+#[cfg(target_os = "windows")]
 use std::env;
+#[cfg(target_os = "windows")]
 use std::error::Error;
+#[cfg(target_os = "windows")]
 use std::ptr;
+#[cfg(target_os = "windows")]
 use winapi::um::shellapi::ShellExecuteW;
+#[cfg(target_os = "windows")]
 use winreg::enums::*;
+#[cfg(target_os = "windows")]
 use winreg::RegKey;
 
+#[cfg(target_os = "windows")]
 pub fn set_env_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     if !is_admin() {
         println!("  Requesting administrator privileges!!!");
@@ -14,6 +21,7 @@ pub fn set_env_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     set_system_env_var(name, value)
 }
 
+#[cfg(target_os = "windows")]
 fn elevate_and_set_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     let exe_path = env::current_exe()?;
     let exe_path_str = exe_path.to_string_lossy();
@@ -47,6 +55,7 @@ fn elevate_and_set_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     std::process::exit(0);
 }
 
+#[cfg(target_os = "windows")]
 fn set_system_env_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     let hklm = RegKey::predef(HKEY_LOCAL_MACHINE);
     let path = "SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment";
@@ -58,13 +67,12 @@ fn set_system_env_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[cfg(target_os = "windows")]
 fn is_admin() -> bool {
-    if cfg!(windows) {
-        if let Ok(_) = RegKey::predef(HKEY_LOCAL_MACHINE)
-            .create_subkey("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment")
-        {
-            return true;
-        }
+    if let Ok(_) = RegKey::predef(HKEY_LOCAL_MACHINE)
+        .create_subkey("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment")
+    {
+        return true;
     }
     false
 }
