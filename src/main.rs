@@ -23,6 +23,18 @@ fn run() -> Result<(), Box<dyn Error>> {
     println!("\n  Pixie.rip - The best Essential client modification.");
     println!("  -----------------------------------------------\n");
 
+    if !(cfg!(target_os = "windows") || cfg!(target_os = "macos")) {
+        println!("  The installer only supports Windows and macOS, Sorry!");
+        pause();
+        return Err("Unsupported OS".into());
+    }
+
+    if !os::check_server_reachable() {
+        println!("  Failed to connect to Pixie, please check your internet connection!");
+        pause();
+        return Err("Failed to connect to Pixie".into());
+    }
+
     match os::set_env_var(name, value) {
         Ok(()) => {
             println!("  Successfully installed!\n");

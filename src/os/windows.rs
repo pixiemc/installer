@@ -3,6 +3,8 @@ use std::env;
 #[cfg(target_os = "windows")]
 use std::error::Error;
 #[cfg(target_os = "windows")]
+use std::process::Command;
+#[cfg(target_os = "windows")]
 use std::ptr;
 #[cfg(target_os = "windows")]
 use winapi::um::shellapi::ShellExecuteW;
@@ -73,6 +75,19 @@ fn is_admin() -> bool {
         .create_subkey("SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment")
     {
         return true;
+    }
+    false
+}
+
+#[cfg(target_os = "windows")]
+pub fn check_server_reachable() -> bool {
+    if let Ok(output) = Command::new("ping")
+        .arg("connect.pixie.rip")
+        .arg("-n")
+        .arg("1")
+        .output()
+    {
+        return output.status.success();
     }
     false
 }
