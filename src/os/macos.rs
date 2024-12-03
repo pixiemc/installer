@@ -58,3 +58,16 @@ pub fn set_env_var(name: &str, value: &str) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[cfg(target_os = "macos")]
+pub fn check_server_reachable() -> bool {
+    if let Ok(output) = Command::new("ping")
+        .arg("connect.pixie.rip")
+        .arg("-c")
+        .arg("1")
+        .output()
+    {
+        return output.status.success();
+    }
+    false
+}
